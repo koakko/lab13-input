@@ -10,7 +10,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'main', url: 'https://github.com/your-repo/docker-jenkins-lab.git'
+                git branch: 'main', url: 'https://github.com/koakko/lab13-input.git'
             }
         }
         stage('Build Docker Image') {
