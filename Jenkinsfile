@@ -24,7 +24,7 @@ pipeline {
             steps {
                 script {
                     dockerImage.inside {
-                        sh 'curl -f http://localhost:3000 || exit 1'
+                        sh 'curl -f http://192.168.0.180:3000 || exit 1'
                     }
                 }
             }
