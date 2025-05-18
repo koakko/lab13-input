@@ -20,7 +20,7 @@ pipeline {
                 }
             }
         }
-        stage('Test Container') {
+        stage('Test Container!') {
             steps {
                 script {
                     dockerImage.inside {
