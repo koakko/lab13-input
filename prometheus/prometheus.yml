@@ -1,0 +1,11 @@
+global:
+  scrape_interval: 5s
+
+scrape_configs:
+  - job_name: 'flask-backend'
+    static_configs:
+      - targets: ['192.168.0.182:5000']
+
+  - job_name: 'nginx-frontend'
+    static_configs:
+      - targets: ['192.168.0.181:9113']
