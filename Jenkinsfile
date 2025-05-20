@@ -1,7 +1,7 @@
 properties ([
     parameters ([
-        choice( name: 'StagSvr', choices: ['Yes', 'No'], description: 'Deploy container in Staging Server?')
-        string( name: 'IMGVer', defaultValue: 'v1', description: 'Add Docker image version')
+        choice(name: 'StagSvr', choices: ['Yes', 'No'], description: 'Deploy container in Staging Server?')
+        string(name: 'IMGVer', defaultValue: 'v1', description: 'Add Docker image version')
     ])
 ])
 node('!master') {
