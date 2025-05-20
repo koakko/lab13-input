@@ -71,7 +71,7 @@ node('!master') {
         stage('Deploy Container') {
             node('frontend-agent') {
             if (params.StagSvr == 'Yes') {
-                withCredentials([sshUserPrivateKey:(credentialsId: st-ssh, keyFileVariable: 'SSH_KEY', usernameVariable: 'SSH_USER')]) {
+                withCredentials([sshUserPrivateKey:(credentialsId: 'st-ssh', keyFileVariable: 'SSH_KEY', usernameVariable: 'SSH_USER')]) {
                     sh "${stssh} ${deploycmd}"
                 }
             } else {
