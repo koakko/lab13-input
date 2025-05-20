@@ -10,8 +10,8 @@ node('!master') {
     def stauth = 'st-ssh'
     def psauth = 'ps-ssh'
     def fimg, bimg
-    def stssh = 'ssh -i /${SSH_KEY} /${SSH_USER}@192.168.0.181 << 'EOF''
-    def psssh = 'ssh -i /${SSH_KEY} /${SSH_USER}@192.168.0.182 << 'EOF''
+    def stssh = 'ssh -i /${SSH_KEY} /${SSH_USER}@192.168.0.182 << 'EOF''
+    def psssh = 'ssh -i /${SSH_KEY} /${SSH_USER}@192.168.0.183 << 'EOF''
     def deploycmd = '''
     docker rmi -f lab13-frontend:${IMGVer} || true
     docker rmi -f lab13-backend:${IMGVer} || true
@@ -34,8 +34,12 @@ node('!master') {
 
         stage('Build Images') {
             node('frontend-agent') {
-            fimg = docker.build("lab13-frontend:${IMGVer}")
-            bimg = docker.build("lab13-backend:${IMGVer}")
+                dir('frontend') {
+                    fimg = docker.build("lab13-frontend:${IMGVer}")
+                }
+                dir('backend') {
+                    bimg = docker.build("lab13-backend:${IMGVer}")
+                }
             }
         }    
 
