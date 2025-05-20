@@ -10,8 +10,8 @@ node('!master') {
     def stauth = 'st-ssh'
     def psauth = 'ps-ssh'
     def fimg, bimg
-    def stssh = 'ssh -i /${SSH_KEY} /${SSH_USER}@192.168.0.182 << 'EOF''
-    def psssh = 'ssh -i /${SSH_KEY} /${SSH_USER}@192.168.0.183 << 'EOF''
+    def stssh = "ssh -i /${SSH_KEY} /${SSH_USER}@192.168.0.182 << 'EOF'"
+    def psssh = "ssh -i /${SSH_KEY} /${SSH_USER}@192.168.0.183 << 'EOF'"
     def deploycmd = '''
     docker rmi -f lab13-frontend:${IMGVer} || true
     docker rmi -f lab13-backend:${IMGVer} || true
@@ -28,17 +28,17 @@ node('!master') {
     try {
         stage('Pull Resource') {
             node('frontend-agent') {
-                git checkout scm
+                checkout scm
             }
         }
 
         stage('Build Images') {
             node('frontend-agent') {
                 dir('frontend') {
-                    fimg = docker.build("lab13-frontend:${IMGVer}")
+                    fimg = docker.build("lab13-frontend:${params.IMGVer}")
                 }
                 dir('backend') {
-                    bimg = docker.build("lab13-backend:${IMGVer}")
+                    bimg = docker.build("lab13-backend:${params.IMGVer}")
                 }
             }
         }    
@@ -56,10 +56,14 @@ node('!master') {
             node('frontend-agent') {
                 parallel(
                     'Test Frontend': {
-                        sh 'curl -f http://localhost:8181 || exit 1'
+                        fimg.inside {
+                            sh 'curl -f http://localhost:8181 || exit 1'
+                        }
                     },
                     'Test Backend': {
-                        sh 'curl -f http://localhost:5000 || exit 1'
+                        bimg.inside {
+                            sh 'curl -f http://localhost:5000 || exit 1'
+                        }
                     }
                 )
             }
@@ -68,16 +72,14 @@ node('!master') {
             node('frontend-agent') {
             if (params.StagSvr == 'Yes') {
                 withCredentials([sshUserPrivateKey:(credentialsId: st-ssh, keyFileVariable: 'SSH_KEY', usernameVariable: 'SSH_USER')]) {
-                    sh '${stssh}'
-                    sh '${deploycmd}'
+                    sh "${stssh} ${deploycmd}"
                 }
             } else {
                 def deployps = input message: "Deploy Container to Production Server?",
     parameters: [choice(name: 'PS', choices: ['Yes', 'No'], description: 'Deploy Frontend and Backend!')]
-             if (params.deployps == 'Yes') {
+             if (deployps == 'Yes') {
                 withCredentials([sshUserPrivateKey:(credentialsId: 'ps-ssh', keyFileVariable: 'SSH_KEY', usernameVariable: 'SSH_USER')]) {
-                    sh '${ps-ssh}'
-                    sh '${deploycmd}'
+                    sh "${psssh} ${deploycmd}"
                 }
              } else {
                 echo "There is no Server for deploy container!"   
