@@ -71,14 +71,14 @@ node('!master') {
         stage('Deploy Container') {
             node('frontend-agent') {
             if (params.StagSvr == 'Yes') {
-                withCredentials([sshUserPrivateKey:(credentialsId: stauth, keyFileVariable: 'SSH_KEY', usernameVariable: 'SSH_USER')]) {
+                withCredentials[sshUserPrivateKey:(credentialsId: stauth, keyFileVariable: 'SSH_KEY', usernameVariable: 'SSH_USER')] {
                     sh "${stssh} ${deploycmd}"
                 }
             } else {
                 def deployps = input message: "Deploy Container to Production Server?",
     parameters: [choice(name: 'PS', choices: ['Yes', 'No'], description: 'Deploy Frontend and Backend!')]
              if (deployps == 'Yes') {
-                withCredentials([sshUserPrivateKey:(credentialsId: psauth, keyFileVariable: 'SSH_KEY', usernameVariable: 'SSH_USER')]) {
+                withCredentials[sshUserPrivateKey:(credentialsId: psauth, keyFileVariable: 'SSH_KEY', usernameVariable: 'SSH_USER')] {
                     sh "${psssh} ${deploycmd}"
                 }
              } else {
